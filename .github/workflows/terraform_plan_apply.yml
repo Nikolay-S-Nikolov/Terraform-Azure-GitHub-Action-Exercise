@@ -46,6 +46,7 @@ jobs:
     #create save terraform plan file
   
   terraform_apply:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     needs: terraform_plan
 
     runs-on: ubuntu-latest
