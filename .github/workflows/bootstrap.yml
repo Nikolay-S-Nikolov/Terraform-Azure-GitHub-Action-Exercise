@@ -1,0 +1,49 @@
+name: Create Azure Backend if Needed
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      TF_IN_AUTOMATION: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure CLI Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Check if container exists
+        id: check_container
+        run: |
+          container_exists=$(az storage container exists \
+            --name tfstatecontainer \
+            --account-name tfstateniko \
+            --query "exists" \
+            --output tsv)
+          
+          echo "Container exists: $container_exists"
+          echo "container_exists=$container_exists" >> $GITHUB_OUTPUT
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init (bootstrap)
+        if: steps.check_container.outputs.container_exists == 'false'
+        working-directory: ./bootstrap
+        run: terraform init
+
+      - name: Terraform Apply (bootstrap)
+        if: steps.check_container.outputs.container_exists == 'false'
+        working-directory: ./bootstrap
+        run: terraform apply -auto-approve
