@@ -1,6 +1,6 @@
 provider "azurerm" {
   features {}
-
+  subscription_id = "b0d9c329-7449-4b76-8026-06ebed4260bc"
 }
 
 
@@ -18,7 +18,7 @@ resource "azurerm_storage_account" "tfstateac" {
 }
 
 resource "azurerm_storage_container" "tfstate" {
-  name                  = "tfstatecontainer"
+  name               = "tfstatecontainer"
   storage_account_id = azurerm_storage_account.tfstateac.id
   # Ensure the container is private
   container_access_type = "private"

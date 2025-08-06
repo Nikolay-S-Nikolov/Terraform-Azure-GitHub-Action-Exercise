@@ -9,7 +9,7 @@ terraform {
     resource_group_name  = "tfstate-rg"
     storage_account_name = "tfstateniko"
     container_name       = "tfstatecontainer"
-    key                  = "terraform.tfstate"    
+    key                  = "terraform.tfstate"
   }
 }
 
