@@ -51,9 +51,9 @@ resource "azurerm_linux_web_app" "azlwa" {
 }
 
 resource "azurerm_app_service_source_control" "azassc" {
-  app_id   = azurerm_linux_web_app.azlwa.id
-  repo_url = var.repo_url
-  branch   = "main"
+  app_id                 = azurerm_linux_web_app.azlwa.id
+  repo_url               = var.repo_url
+  branch                 = "main"
   use_manual_integration = true
 }
 
