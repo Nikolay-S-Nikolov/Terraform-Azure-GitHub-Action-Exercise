@@ -17,7 +17,7 @@ resource "azurerm_storage_account" "tfstateac" {
   account_replication_type = "LRS"
 }
 
-resource "azurerm_storage_container" "tfstate" {
+resource "azurerm_storage_container" "tfstatecn" {
   name               = "tfstatecontainer"
   storage_account_id = azurerm_storage_account.tfstateac.id
   # Ensure the container is private
