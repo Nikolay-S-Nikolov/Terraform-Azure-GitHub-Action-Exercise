@@ -26,14 +26,23 @@ jobs:
       - name: Check if container exists
         id: check_container
         run: |
+          set -e
+          account_exists=$(az storage account check-name --name tfstateniko --query "nameAvailable" --output tsv)
+          if [ "$account_exists" = "true" ]; then
+            echo "Storage account does not exist yet."
+            echo "container_exists=false" >> $GITHUB_OUTPUT
+          else
+            echo "Storage account exists."
           container_exists=$(az storage container exists \
             --name tfstatecontainer \
             --account-name tfstateniko \
+            --auth-mode login \
             --query "exists" \
             --output tsv)
           
-          echo "Container exists: $container_exists"
-          echo "container_exists=$container_exists" >> $GITHUB_OUTPUT
+            echo "Container exists: $container_exists"
+            echo "container_exists=$container_exists" >> $GITHUB_OUTPUT
+          fi
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
